@@ -1,0 +1,50 @@
+- name: test raw module
+  hosts: fntsshrd
+  
+  tasks:
+    - name: run ipconfig
+      raw: ipconfig
+      register: ipconfig
+    - debug: var=ipconfig  
+    
+    - name: Ensure user bob is present
+      win_user:
+        name: "bob"
+        password: "B0bP4ssw0rd"
+        state: present
+        groups:
+          - Users,Administrators
+          
+#    - win_dns_client:
+#       adapter_names: "*"
+#        ipv4_addresses:
+#        - 192.168.34.5
+#        - 192.168.34.6
+           
+    - name: Install SNMP
+      win_feature:
+        name: SNMP-Service
+        state: present
+        
+    - name: Add Community String under Security Team
+      win_regedit:
+        key: HKLM:\SYSTEM\CurrentControlSet\Services\SNMP\Parameters\ValidCommunities
+        data: "0x00000004"
+        datatype: "dword"
+        value: "FNTS-99999"
+        state: present
+        
+    - name: Add IP and Community Strings under Traps Tab
+      win_regedit:
+        key: HKLM:\SYSTEM\CurrentControlSet\Services\SNMP\Parameters\TrapConfiguration\FNTS-9999
+        data: "10.101.0.77"
+        value: "1"
+        state: present
+        
+    - name: Install SNMP
+      win_feature:
+        name: SNMP-Service
+        state: restarted
+        
+        
+        
