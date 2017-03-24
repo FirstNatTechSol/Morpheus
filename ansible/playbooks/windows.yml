@@ -37,7 +37,7 @@
     - name: Add IP and Community Strings under Traps Tab
       win_regedit:
         key: HKLM:\SYSTEM\CurrentControlSet\Services\SNMP\Parameters\TrapConfiguration\FNTS-9999
-        data: "10.101.0.77"
+        data: "10.101.101.101"
         value: "1"
         state: present
         
